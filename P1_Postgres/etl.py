@@ -6,6 +6,18 @@ from sql_queries import *
 
 
 def process_song_file(cur, filepath):
+    """
+    Description:
+        This function reads the song data and inserts the selected parts of the data it into
+        the songs & artists tables.
+
+    Arguments:
+        cur: cursor object
+        filepath: path to the song data file
+
+    Returns:
+        None
+    """
     # open song file
     df = pd.read_json(filepath,typ="series")
 
@@ -19,6 +31,20 @@ def process_song_file(cur, filepath):
 
 
 def process_log_file(cur, filepath):
+    """
+     Description:   
+        This function reads the log data & cleans it by doing some filtering and resetting datatypes. 
+        It then inserts the start_time column into date_time table with added some transformations.
+        It inserts data to users table.
+        Finally, it runs a sql query to create the meaningful songplay data and inserts it into the song_plays table.
+
+    Arguments:
+        cur: cursor object
+        filepath: path to the log data file
+
+    Returns:
+        None
+    """
     # open log file
     df = pd.read_json(filepath,lines=True)
 
@@ -49,8 +75,10 @@ def process_log_file(cur, filepath):
         # get songid and artistid from song and artist tables
         cur.execute(song_select, (row.song, row.artist, row.length))
         results = cur.fetchone()
+
         
         if results:
+            print(results)
             songid, artistid = results
         else:
             songid, artistid = None, None
@@ -61,6 +89,20 @@ def process_log_file(cur, filepath):
 
 
 def process_data(cur, conn, filepath, func):
+    """
+    Description:
+        This function reads all the files in the given folder by iterating on each file 1-by-1. 
+        Then, it inserts the data in each file one by one to the relevant table.
+
+    Arguments:
+        cur: cursor object
+        conn: object for the connection to the database
+        filepath: path to the song or long data file
+        func: function to transform & insert data to a database table
+
+    Returns:
+        None
+    """
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):

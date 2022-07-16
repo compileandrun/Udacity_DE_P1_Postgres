@@ -5,10 +5,17 @@ import os
 
 def create_database():
     """
-    - Creates and connects to the sparkifydb
-    - Returns the connection and cursor to sparkifydb
+    Description:
+    	- Drops (if exists) and Creates the sparkify database. 
+    	- Establishes connection with the sparkify database and gets
+    	cursor to it.  
+
+	Arguments:
+		None
+
+    Returns:
+    	the connection and cursor to sparkifydb
     """
-    
     # connect to default database
     conn = psycopg2.connect("host=127.0.0.1 dbname=super_awesome_application user=koray_v2")
     conn.set_session(autocommit=True)
@@ -30,7 +37,15 @@ def create_database():
 
 def drop_tables(cur, conn):
     """
-    Drops each table using the queries in `drop_table_queries` list.
+    Description:
+    	Drops each table using the queries in `drop_table_queries` list.
+
+	Arguments:
+        cur: cursor object
+        conn: object for the connection to the database
+
+    Returns:
+    	None
     """
     for query in drop_table_queries:
         print("Dropping Tables")
@@ -41,7 +56,15 @@ def drop_tables(cur, conn):
 
 def create_tables(cur, conn):
     """
-    Creates each table using the queries in `create_table_queries` list. 
+    Description:
+    	Creates each table using the queries in `create_table_queries` list. 
+
+	Arguments:
+        cur: cursor object
+        conn: object for the connection to the database
+
+    Returns:
+    	None
     """
     for query in create_table_queries:
         cur.execute(query)
@@ -50,16 +73,15 @@ def create_tables(cur, conn):
 
 def main():
     """
-    - Drops (if exists) and Creates the sparkify database. 
-    
-    - Establishes connection with the sparkify database and gets
-    cursor to it.  
-    
-    - Drops all the tables.  
-    
-    - Creates all tables needed. 
-    
-    - Finally, closes the connection. 
+	Description:
+		Main function. Runs all the functions and closes the connection at the end.
+	
+	Arguments: 
+		None
+
+	Returns:
+        cur: cursor object
+        conn: object for the connection to the database
     """
     cur, conn = create_database()
     

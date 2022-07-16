@@ -11,13 +11,13 @@ time_table_drop = "DROP TABLE IF EXISTS date_time"
 songplay_table_create = (""" CREATE TABLE songplays (
 							songplay_id serial PRIMARY KEY, 
 							start_time timestamp NOT NULL, 
-							user_id int NOT NULL, 
+							user_id int references users (user_id), 
 							level varchar, 
 							song_id varchar, -- I wanted to put NOT NULL constraint here. But if this constraint is violated, 
 							-- I get an error. And postgres do not have any function to get around this.
 							-- SO either as here I have to get rid of this constraint or I have to clean the data and try again.
 							--https://stackoverflow.com/questions/59430790/null-value-in-column-violates-not-null-constraint-postgresql 
-							artist_id varchar, 
+							artist_id varchar references artists (artist_id), 
 							session_id varchar, 
 							location varchar, 
 							user_agent varchar) """)
@@ -34,7 +34,7 @@ song_table_create = (""" CREATE TABLE songs (
 						title varchar NOT NULL, 
 						artist_id varchar NOT NULL, 
 						year int NOT NULL, 
-						duration real NOT NULL) """)
+						duration double precision NOT NULL) """)
 
 artist_table_create = (""" CREATE TABLE artists (
 							artist_id varchar PRIMARY KEY, 
@@ -44,7 +44,7 @@ artist_table_create = (""" CREATE TABLE artists (
 							longitude double precision) """)
 
 time_table_create = (""" CREATE TABLE date_time (
-						start_time timestamp, 
+						start_time timestamp PRIMARY KEY, 
 						hour int, 
 						day int, 
 						week int, 
@@ -83,11 +83,8 @@ time_table_insert = ("""INSERT INTO date_time (start_time, hour, day, week, mont
 
 song_select = ("""
 	SELECT 
-	a.artist_id,
-	a.artist_name,
 	s.song_id,
-	s.duration,
-	s.title
+	a.artist_id
 	FROM artists a
 INNER JOIN songs s
 ON a.artist_id = s.artist_id
@@ -98,5 +95,5 @@ AND s.duration = %s
 
 # QUERY LISTS
 
-create_table_queries = [songplay_table_create, user_table_create, song_table_create, artist_table_create, time_table_create]
+create_table_queries = [user_table_create, song_table_create, artist_table_create, time_table_create, songplay_table_create]
 drop_table_queries = [songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
