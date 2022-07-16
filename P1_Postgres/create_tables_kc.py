@@ -2,19 +2,21 @@ import psycopg2
 from sql_queries import create_table_queries, drop_table_queries
 import pandas as pd
 import os
+from sqlalchemy_schemadisplay import create_schema_graph
+from sqlalchemy import MetaData
 
 def create_database():
     """
     Description:
-    	- Drops (if exists) and Creates the sparkify database. 
-    	- Establishes connection with the sparkify database and gets
-    	cursor to it.  
+        - Drops (if exists) and Creates the sparkify database. 
+        - Establishes connection with the sparkify database and gets
+        cursor to it.  
 
-	Arguments:
-		None
+    Arguments:
+        None
 
     Returns:
-    	the connection and cursor to sparkifydb
+        the connection and cursor to sparkifydb
     """
     # connect to default database
     conn = psycopg2.connect("host=127.0.0.1 dbname=super_awesome_application user=koray_v2")
@@ -38,14 +40,14 @@ def create_database():
 def drop_tables(cur, conn):
     """
     Description:
-    	Drops each table using the queries in `drop_table_queries` list.
+        Drops each table using the queries in `drop_table_queries` list.
 
-	Arguments:
+    Arguments:
         cur: cursor object
         conn: object for the connection to the database
 
     Returns:
-    	None
+        None
     """
     for query in drop_table_queries:
         print("Dropping Tables")
@@ -57,29 +59,34 @@ def drop_tables(cur, conn):
 def create_tables(cur, conn):
     """
     Description:
-    	Creates each table using the queries in `create_table_queries` list. 
+        Creates each table using the queries in `create_table_queries` list. 
 
-	Arguments:
+    Arguments:
         cur: cursor object
         conn: object for the connection to the database
 
     Returns:
-    	None
+        None
     """
     for query in create_table_queries:
         cur.execute(query)
         conn.commit()
     print("all tables are created")
 
+def erd():
+    graph = create_schema_graph(metadata=MetaData('postgresql://koray_v2@127.0.0.1/sparkifydb'))
+    graph.write_png('sparkifydb_erd.png')
+    print("graph is drawn!")
+
 def main():
     """
-	Description:
-		Main function. Runs all the functions and closes the connection at the end.
-	
-	Arguments: 
-		None
+    Description:
+        Main function. Runs all the functions and closes the connection at the end.
+    
+    Arguments: 
+        None
 
-	Returns:
+    Returns:
         cur: cursor object
         conn: object for the connection to the database
     """
@@ -87,7 +94,7 @@ def main():
     
     drop_tables(cur, conn)
     create_tables(cur, conn)
-
+    erd()
     conn.close()
 
 if __name__ == "__main__":
