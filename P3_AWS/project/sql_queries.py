@@ -125,8 +125,10 @@ staging_events_copy = ("""
 """).format(DWH_ROLE_ARN)
 #fromat line  helps with formatting of column names and thus match the ones in S3 and staging_events table.                       
 
+
+# I tested with copy staging_songs from 's3://udacity-dend/song_data/A/A' because the processing time for the full dataset was too long
 staging_songs_copy = ("""
-    copy staging_songs from 's3://udacity-dend/song_data/A/A'
+    copy staging_songs from 's3://udacity-dend/song_data/'
     credentials 'aws_iam_role={}'
     format as json 'auto' 
     region 'us-west-2';
