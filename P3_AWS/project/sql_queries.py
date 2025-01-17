@@ -33,7 +33,7 @@ staging_events_table_create= ("""
     location  	varchar, 
     method 	varchar, 
    page   	varchar ,
-   registration 	bigint,  
+   registration 	varchar,  
    sessionId 	int,  
    song   	varchar, 
    status 	int,  
@@ -60,12 +60,12 @@ staging_songs_table_create = ("""
 
 songplay_table_create = ("""
 	CREATE TABLE songplay (
-	songplay_id int IDENTITY(1,1) sortkey,
-	start_time bigint , 
-	user_id int , 
+	songplay_id int IDENTITY(1,1) PRIMARY KEY SORTKEY,
+	start_time bigint REFERENCES playtimes(start_time), 
+	user_id int REFERENCES users(user_id), 
 	level varchar, 
-	song_id varchar distkey, 
-	artist_id varchar, 
+	song_id varchar REFERENCES songs(song_id) distkey, 
+	artist_id varchar REFERENCES artists(artist_id), 
 	session_id int, 
 	location varchar, 
 	user_agent varchar
@@ -75,8 +75,8 @@ songplay_table_create = ("""
 
 user_table_create = ("""
 	CREATE TABLE users (
-	user_id int sortkey, 
-	first_name varchar, 
+	user_id int PRIMARY KEY SORTKEY, 
+	first_name varchar NOT NULL, 
 	last_name varchar, 
 	gender varchar, 
 	level varchar
@@ -85,7 +85,7 @@ user_table_create = ("""
 
 song_table_create = ("""
 	CREATE TABLE songs (
-	song_id varchar sortkey distkey, 
+	song_id varchar PRIMARY KEY SORTYKEY DISTKEY, 
 	title varchar, 
 	artist_id varchar, 
 	year INT, 
@@ -95,7 +95,7 @@ song_table_create = ("""
 
 artist_table_create = ("""
 	CREATE TABLE artists (
-	artist_id varchar  sortkey,
+	artist_id varchar  PRIMARY KEY SORTKEY,
 	name varchar, 
 	location varchar, 
 	latitude float8, 
@@ -105,7 +105,7 @@ artist_table_create = ("""
 
 time_table_create = ("""
 	CREATE TABLE playtimes (
-	start_time bigint sortkey, 
+	start_time bigint PRIMARY KEY SORTKEY, 
 	hour INT, 
 	day int, 
 	week int, 
@@ -128,7 +128,7 @@ staging_events_copy = ("""
 
 # I tested with copy staging_songs from 's3://udacity-dend/song_data/A/A' because the processing time for the full dataset was too long
 staging_songs_copy = ("""
-    copy staging_songs from 's3://udacity-dend/song_data/'
+    copy staging_songs from 's3://udacity-dend/song_data/A/A/A'
     credentials 'aws_iam_role={}'
     format as json 'auto' 
     region 'us-west-2';
